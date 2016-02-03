@@ -2,7 +2,6 @@
 
 <i>Note: Work in progress! currently I only have the tokenizer (mostly) done, but that's really the interesting part. </i>
 
-
 In this project I wanted to parse the output from a Inspect of data returned from Elixir MongoDB client.
 
 The purpose was to practice Elixir programming and be able to generate formats for MongoDB console (Json),
@@ -20,17 +19,24 @@ the tail of the list. This give much better memory performance as the immutable 
 to be copied on each iteration. Then in the final step I reverse the list.
 
 
+Procedure:
 
-##Goal is to produce this:
+1. For an input string tokenize the stream (mostly done)
+2. From tokenized stream output different formats
 
-| Input                                   | Elixir | Json | Ruby |
+
+
+## Conversions of tokenized stream
+
+| Input                                   | Elixir | Json | Ruby (2.2 driver) |
 | ------------------------------------------|:-----:|:---:|-----:|
 | %{                                        | %{  | { | { |
-| [                                         | [ | [ | [ |
+| }                                        | } | { | } |
+| \[                                         | \[ | \[ | \[ |
+| \]                                         | \] | \] | \] |
 | =>                                        |  => | : | => |
-| #BSON.ObjectId<53d80bbc4566210472805984>  |    %BSON.ObjectId{value: "53d80bbc4566210472805984"}   |   %BSON.ObjectId{value: "53d80bbc4566210472805984"}   | %BSON.ObjectId{value: "53d80bbc4566210472805984"}   |
-| #BSON.DateTime<2016-01-10T21:33:43.737000Z> |  %BSON.DateTime{utc: "2016-01-10T21:33:43.737000Z"}   |    %BSON.DateTime{utc: "2016-01-10T21:33:43.737000Z"}  |  %BSON.DateTime{utc: "2016-01-10T21:33:43.737000Z"}  |
-}
+| #BSON.ObjectId<53d80bbc4566210472805984>  | %BSON.ObjectId{value: "53d80bbc4566210472805984"}     |  ObjectId("53d80bbc4566210472805984")    | "53d80bbc4566210472805984"   |
+| #BSON.DateTime<2016-01-10T21:33:43.737000Z> |  %BSON.DateTime{utc: "2016-01-10T21:33:43.737000Z"}    |   ISODate("2016-01-10T21:33:43.737")  |  DateTime.parse("2016-01-10T21:33:43.737000Z"  |
 
 
 
