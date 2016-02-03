@@ -16,8 +16,6 @@ defmodule Tokenize do
 
   def tokenize(str) do
     result = []
-    c = Regex.compile("%{|}|\[|\]|=>|\,")
-
     final = _tokenize(str, result)
     final = Enum.reverse(final)
   end
@@ -59,12 +57,5 @@ defmodule Tokenize do
         _tokenize(String.lstrip(str_out), [ match | result ])
      end
   end
-
-
-"""
-   Tokenize of ", , " will result in termination, because it will split on
-   space, and spaces will result in an ampty string
-
-"""
 
 end
