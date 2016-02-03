@@ -43,25 +43,11 @@ str2 = "%{ [ ]  =>, , , , ,, ,, , , , => [ ], , , , , , , , , , , , , , , , , , 
 str3 = "%{ [ ]  =>, , , , , => => [ , , ]  , , , , , , , , , , , , , , , , , , , , , , , , , , , ] ] ] ] ] ] ] [ [ [ [ [ ] ] ] ] ][ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ => }   "
 
 
-beginning_time = Time.now
-Tokenize.tokenize(str)
-end_time = Time.now
-puts "Time elapsed #{(end_time - beginning_time)*1000} milliseconds"
-
-beginning_time = Time.now
-Tokenize.tokenize(str2)
-end_time = Time.now
-puts "Time elapsed #{(end_time - beginning_time)*1000} milliseconds"
-
-beginning_time = Time.now
-Tokenize.tokenize(str3)
-end_time = Time.now
-puts "Time elapsed #{(end_time - beginning_time)*1000} milliseconds"
-
-beginning_time = Time.now
-Tokenize.tokenize(str)
-end_time = Time.now
-puts "Time elapsed #{(end_time - beginning_time)*1000} milliseconds"
-
+[str, str2, str3].each do | str |
+  beginning_time = Time.now
+  Tokenize.tokenize(str)
+  end_time = Time.now
+  puts "Time elapsed #{(end_time - beginning_time)*1000} milliseconds"
+end
 
 #puts Benchmark.measure { Tokenize.tokenize(str) }
