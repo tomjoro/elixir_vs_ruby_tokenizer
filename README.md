@@ -64,13 +64,21 @@ the same performance. The important thing is to avoid iterating the entire strin
 
 ## Performance
 
+I run each a few times to let them 'warm up'. Warm up only seems to be a concept in Elixir, and not Ruby.
+
 Elixir/Erlang yields about 2x performance for test cases 600micro seconds, vs 300microsends.
+
+- Ruby 1.9.2 : 1.171 ms
+- Ruby 2.2.2 : 0.599 ms
+- Elixir 1.2 : 0.259 ms
 
 However, the initial run in Elixir did take longer, but then subsequent runs were really fast. 
 
 I was worried that the recursive list building and string splitting would be slow. But actually Elixir was
 faster...
 
+Also, the Erlang VM (BEAM) does take a few hundred ms to startup. Ruby starts almost immediately. But
+it's not very noticeable for command scripts like this.
 
 ##Output of tokenizer
 
@@ -78,23 +86,29 @@ faster...
 ```
 ruby tokenize.rb
 
-result [{:tk_start_hash=>"%{"}, {:tk_start_array=>"["}, {:tk_end_array=>"]"}, {:tk_kv=>"=>"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, 
-{:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, 
-{:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, 
-{:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, 
-{:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, 
-{:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"},
- {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["},
-  {:tk_start_array=>"["}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_start_array=>"["}, 
-  {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["},
-   {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, 
-   {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, 
-   {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["},
-    {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["},
-     {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["},
-      {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_kv=>"=>"}, {:tk_end_hash=>"}"}]
-      
-      Time elapsed 0.533 milliseconds
+
+result [{:tk_start_hash=>"%{"}, {:tk_start_array=>"["}, {:tk_end_array=>"]"}, {:tk_kv=>"=>"}, {:tk_comma=>","}, 
+{:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, 
+{:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, {:tk_kv=>"=>"}, {:tk_start_array=>"["}, 
+{:tk_end_array=>"]"}, {:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, 
+{:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, 
+{:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, 
+{:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, 
+{:tk_comma=>","}, {:tk_comma=>","}, {:tk_comma=>","}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, 
+{:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_start_array=>"["}, 
+{:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_end_array=>"]"}, 
+{:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, 
+{:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, 
+{:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, 
+{:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, 
+{:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, 
+{:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, 
+{:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, 
+{:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["},
+ {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_kv=>"=>"}, 
+ {:tk_end_hash=>"}"}]
+ 
+ Time elapsed 0.599 milliseconds
 ```
 
 ### Elixir

@@ -22,6 +22,8 @@ module Tokenize
                   { tk_start_array:  "["  }
                 when "]"
                   { tk_end_array: "]"  }
+                when ","
+                  { tk_comma: ","  }
                 else
                   { unknown: "xxx"}
               end
