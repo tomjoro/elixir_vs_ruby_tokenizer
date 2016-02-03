@@ -11,8 +11,11 @@ I developed the tokenizer in both Elixir and then in Ruby and compare the code a
 
 I tried to follow a similar code structure in both languages.
 
-lib/tokenize.ex
-lib/tokenize.rb
+Code can be found and compared here:
+
+* [Elixir tokenize (lib/tokenize.ex)](lib/tokenize.ex)
+* [Ruby tokenize (lib/tokenize.rb)](lib/tokenize.rb)
+
 
 One optimization in Elixir is to construct the list in reverse order by always pre-pending (add to head) instead
 the tail of the list. This give much better memory performance as the immutable lists don't need
