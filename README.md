@@ -1,6 +1,7 @@
-# ElixirInspectToMongoJson
+# Elixir_vs_Ruby_Tokenizer
 
-Note: currently I only have the tokenizer done, but that's really the interesting part.
+<i>Note: Work in progress! currently I only have the tokenizer (mostly) done, but that's really the interesting part. </i>
+
 
 In this project I wanted to parse the output from a Inspect of data returned from Elixir MongoDB client.
 
@@ -19,17 +20,18 @@ the tail of the list. This give much better memory performance as the immutable 
 to be copied on each iteration. Then in the final step I reverse the list.
 
 
-#Table:
 
- Find "value" =>
+##Goal is to produce this:
 
- %{
-| PARSED                                    | PUSH to Array |
-| key => value                              |  key, value |
-| key => [ something, something ]           |  key => [ something, something ] |
-| #BSON.ObjectId<53d80bbc4566210472805984>  |    %BSON.ObjectId{value: "53d80bbc4566210472805984"}   |
-| #BSON.DateTime<2016-01-10T21:33:43.737000Z> |  %BSON.DateTime{utc: "2016-01-10T21:33:43.737000Z"}   |
+| Input                                   | Elixir | Json | Ruby |
+| ------------------------------------------|:-----:|:---:|-----:|
+| %{                                        | %{  | { | { |
+| [                                         | [ | [ | [ |
+| =>                                        |  => | : | => |
+| #BSON.ObjectId<53d80bbc4566210472805984>  |    %BSON.ObjectId{value: "53d80bbc4566210472805984"}   |   %BSON.ObjectId{value: "53d80bbc4566210472805984"}   | %BSON.ObjectId{value: "53d80bbc4566210472805984"}   |
+| #BSON.DateTime<2016-01-10T21:33:43.737000Z> |  %BSON.DateTime{utc: "2016-01-10T21:33:43.737000Z"}   |    %BSON.DateTime{utc: "2016-01-10T21:33:43.737000Z"}  |  %BSON.DateTime{utc: "2016-01-10T21:33:43.737000Z"}  |
 }
+
 
 
 
@@ -48,7 +50,62 @@ With Elixir there was more thinking up-front, and less testing by running. At th
 with Elixir's ability to fun in Iex is really handy. I found I code written in Elixir was more likely
 to run :)
 
-# Performance
+There's a few different way to split strings in Elixir, so I tried a few of them - they all seem to have nearly
+the same performance. The important thing is to avoid iterating the entire string! 
+
+## Performance
 
 Elixir/Erlang yields about 2x performance for test cases 600micro seconds, vs 300microsends.
 
+However, the initial run in Elixir did take longer, but then subsequent runs were really fast. 
+
+I was worried that the recursive list building and string splitting would be slow. But actually Elixir was
+faster...
+
+
+##Output of tokenizer
+
+### Ruby
+```
+ruby tokenize.rb
+
+result [{:tk_start_hash=>"%{"}, {:tk_start_array=>"["}, {:tk_end_array=>"]"}, {:tk_kv=>"=>"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, 
+{:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, 
+{:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, 
+{:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, 
+{:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, 
+{:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:unknown=>"xxx"}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"},
+ {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["},
+  {:tk_start_array=>"["}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_end_array=>"]"}, {:tk_start_array=>"["}, 
+  {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["},
+   {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, 
+   {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, 
+   {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["},
+    {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["},
+     {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["},
+      {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_start_array=>"["}, {:tk_kv=>"=>"}, {:tk_end_hash=>"}"}]
+      
+      Time elapsed 0.533 milliseconds
+```
+
+### Elixir
+
+./elixir_mongo_inspect 
+
+
+```
+{259,
+ [tk_start_hash: "%{", tk_start_array: "[", tk_end_array: "]", tk_kv: "=>",
+  tk_comma: ",", tk_comma: ",", tk_comma: ",", tk_comma: ",", tk_comma: ",",
+  tk_comma: ",", tk_comma: ",", tk_comma: ",", tk_kv: "=>", tk_comma: ",",
+  tk_comma: ",", tk_comma: ",", tk_comma: ",", tk_comma: ",", tk_comma: ",",
+  tk_comma: ",", tk_comma: ",", tk_comma: ",", tk_comma: ",", tk_comma: ",",
+  tk_comma: ",", tk_comma: ",", tk_comma: ",", tk_start_array: "[",
+  tk_end_array: "]", tk_start_array: "[", tk_end_array: "]",
+  tk_start_array: "[", tk_end_array: "]", tk_start_array: "[",
+  tk_end_array: "]", tk_start_array: "[", tk_end_array: "]", tk_comma: ",",
+  tk_comma: ",", tk_comma: ",", tk_comma: ",", tk_end_array: "]",
+  tk_end_array: "]", tk_end_array: "]", tk_end_array: "]", tk_end_array: "]",
+  tk_end_array: "]", tk_end_array: "]", tk_start_array: "[", ...]}
+
+```
